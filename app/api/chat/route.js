@@ -9,7 +9,7 @@ export async function POST(request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "openrouter/auto",
+        model: "deepseek/deepseek-v4-flash:free",
         messages: [
           {
             role: "system",
