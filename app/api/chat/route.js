@@ -9,7 +9,7 @@ export async function POST(request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "deepseek/deepseek-v4-flash:free",
+        model: "z-ai/glm-4.5-air:free",
         messages: [
           {
             role: "system",
