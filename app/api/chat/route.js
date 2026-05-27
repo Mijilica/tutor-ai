@@ -36,7 +36,7 @@ Regulile tale:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "z-ai/glm-4.5-air:free",
+        model: "google/gemma-3-27b-it:free",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
