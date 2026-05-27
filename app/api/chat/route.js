@@ -36,7 +36,7 @@ Regulile tale:
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemma-3-27b-it:free",
+        model: "deepseek/deepseek-v4-flash:free",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
