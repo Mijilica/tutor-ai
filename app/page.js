@@ -16,7 +16,13 @@ const MATERIE_CONFIG = {
   "Biologie": { icon: "🌿", bg: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80" },
   "Engleză": { icon: "🇬🇧", bg: "https://images.unsplash.com/photo-1526129318478-62ed807ebdf9?w=1920&q=80" },
 };
-
+const BADGES = [
+  { id: "first", icon: "🌟", name: "Prima întrebare!", points: 0 },
+  { id: "10points", icon: "🥉", name: "10 puncte!", points: 10 },
+  { id: "30points", icon: "🥈", name: "30 puncte!", points: 30 },
+  { id: "50points", icon: "🥇", name: "50 puncte!", points: 50 },
+  { id: "100points", icon: "🏆", name: "100 puncte!", points: 100 },
+];
 function ChatBackground({ materie }) {
   const config = MATERIE_CONFIG[materie];
   if (!config?.bg) return null;
