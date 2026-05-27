@@ -128,7 +128,7 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center p-4 relative">
       <ChatBackground materie={materie} />
-      <div className="flex items-center justify-between w-full max-w-2xl my-4 z-10">
+      <div className="flex items-center justify-between w-full max-w-2xl my-4 z-10 bg-black/40 backdrop-blur rounded-2xl px-4 py-2">
         <div className="flex items-center gap-3">
           <button onClick={() => { setStarted(false); setMessages([]); setQuiz(null); setAnswers({}); }}
             className="text-blue-400 hover:text-white transition-all mr-2">
