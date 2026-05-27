@@ -51,13 +51,12 @@ Regulile tale:
 
     const content = data.choices[0].message.content;
 
-   if (generateQuiz) {
+    if (generateQuiz) {
       try {
         const clean = content
           .replace(/```json/g, "")
           .replace(/```/g, "")
           .trim();
-        
         const jsonMatch = clean.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           const quiz = JSON.parse(jsonMatch[0]);
@@ -68,3 +67,10 @@ Regulile tale:
         return Response.json({ message: content });
       }
     }
+
+    return Response.json({ message: content });
+  } catch (error) {
+    console.error(error);
+    return Response.json({ message: "Eroare: " + error.message }, { status: 500 });
+  }
+}
