@@ -51,19 +51,20 @@ Regulile tale:
 
     const content = data.choices[0].message.content;
 
-    if (generateQuiz) {
+   if (generateQuiz) {
       try {
-        const clean = content.replace(/```json|```/g, "").trim();
-        const quiz = JSON.parse(clean);
-        return Response.json({ quiz });
+        const clean = content
+          .replace(/```json/g, "")
+          .replace(/```/g, "")
+          .trim();
+        
+        const jsonMatch = clean.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const quiz = JSON.parse(jsonMatch[0]);
+          return Response.json({ quiz });
+        }
+        return Response.json({ message: "Nu am putut genera quizul." });
       } catch {
         return Response.json({ message: content });
       }
     }
-
-    return Response.json({ message: content });
-  } catch (error) {
-    console.error(error);
-    return Response.json({ message: "Eroare: " + error.message }, { status: 500 });
-  }
-}
