@@ -104,6 +104,10 @@ export default function Home() {
     <div className="min-h-screen flex flex-col items-center p-4" style={{background: "linear-gradient(135deg, #0a0a1a 0%, #0d1b3e 50%, #0a0a1a 100%)"}}>
       <div className="flex items-center justify-between w-full max-w-2xl my-4">
         <div className="flex items-center gap-3">
+          <button onClick={() => { setStarted(false); setMessages([]); setQuiz(null); setAnswers({}); }}
+            className="text-blue-400 hover:text-white transition-all mr-2">
+            ← Înapoi
+          </button>
           <Image src="/andi.png" alt="Andi" width={48} height={48} className="rounded-full border-2 border-blue-500" />
           <div>
             <h1 className="text-xl font-bold text-white">ANDI</h1>
