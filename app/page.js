@@ -4,7 +4,17 @@ import Image from "next/image";
 
 const CLASE = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 const MATERII = ["Matematică", "Română", "Istorie", "Geografie", "Științe", "Fizică", "Chimie", "Biologie", "Engleză"];
-
+const MATERIE_CONFIG = {
+  "Matematică": { color: "from-blue-900 to-blue-950", accent: "blue", icon: "🔢" },
+  "Română": { color: "from-green-900 to-green-950", accent: "green", icon: "📖" },
+  "Istorie": { color: "from-amber-900 to-amber-950", accent: "amber", icon: "⚔️" },
+  "Geografie": { color: "from-teal-900 to-teal-950", accent: "teal", icon: "🌍" },
+  "Științe": { color: "from-purple-900 to-purple-950", accent: "purple", icon: "🔬" },
+  "Fizică": { color: "from-cyan-900 to-cyan-950", accent: "cyan", icon: "⚡" },
+  "Chimie": { color: "from-orange-900 to-orange-950", accent: "orange", icon: "🧪" },
+  "Biologie": { color: "from-lime-900 to-lime-950", accent: "lime", icon: "🌿" },
+  "Engleză": { color: "from-red-900 to-red-950", accent: "red", icon: "🇬🇧" },
+};
 export default function Home() {
   const [clasa, setClasa] = useState("");
   const [materie, setMaterie] = useState("");
@@ -16,7 +26,7 @@ export default function Home() {
   const [quizLoading, setQuizLoading] = useState(false);
   const [answers, setAnswers] = useState({});
   const [points, setPoints] = useState(0);
-
+const config = MATERIE_CONFIG[materie] || { color: "from-slate-900 to-slate-950", accent: "blue", icon: "📚" };
   async function sendMessage() {
     if (!input.trim()) return;
     const newMessages = [...messages, { role: "user", content: input }];
@@ -67,7 +77,7 @@ export default function Home() {
   }
 
   if (!started) return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4" style={{background: "linear-gradient(135deg, #0a0a1a 0%, #0d1b3e 50%, #0a0a1a 100%)"}}>
+    <div className="min-h-screen flex flex-col items-center justify-center p-4" className={`min-h-screen bg-gradient-to-br ${started ? config.color : "from-slate-900 to-slate-950"} flex flex-col items-center ${started ? "p-4" : "justify-center p-4"}`}>
       <div className="flex flex-col items-center mb-8">
         <Image src="/andi.png" alt="Andi" width={120} height={120} className="rounded-full mb-4 border-4 border-blue-500 shadow-lg shadow-blue-500/50" />
         <h1 className="text-4xl font-bold text-white mb-1">ANDI</h1>
@@ -101,7 +111,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4" style={{background: "linear-gradient(135deg, #0a0a1a 0%, #0d1b3e 50%, #0a0a1a 100%)"}}>
+    <div className="min-h-screen flex flex-col items-center p-4" className={`min-h-screen bg-gradient-to-br ${started ? config.color : "from-slate-900 to-slate-950"} flex flex-col items-center ${started ? "p-4" : "justify-center p-4"}`}>
       <div className="flex items-center justify-between w-full max-w-2xl my-4">
         <div className="flex items-center gap-3">
           <button onClick={() => { setStarted(false); setMessages([]); setQuiz(null); setAnswers({}); }}
