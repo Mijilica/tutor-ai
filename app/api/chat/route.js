@@ -1,6 +1,33 @@
 export async function POST(request) {
   try {
-    const { messages } = await request.json();
+    const { messages, clasa, materie, generateQuiz } = await request.json();
+
+    let systemPrompt = "";
+
+    if (generateQuiz) {
+      systemPrompt = `Ești un profesor care generează teste pentru elevi din România.
+Bazat pe conversația anterioară, generează EXACT 3 întrebări grilă în română.
+Răspunde DOAR cu JSON valid, fără text suplimentar, în acest format exact:
+{
+  "questions": [
+    {
+      "question": "întrebarea aici",
+      "options": ["A. varianta1", "B. varianta2", "C. varianta3"],
+      "correct": 0
+    }
+  ]
+}
+"correct" este indexul răspunsului corect (0, 1 sau 2).`;
+    } else {
+      systemPrompt = `Ești Andi, un tutore AI prietenos pentru elevi din România la ${materie}, clasa ${clasa}.
+Regulile tale:
+- Vorbești DOAR în română corectă
+- Răspunsuri SCURTE și clare, maxim 4-5 propoziții
+- Nu dai niciodată răspunsul direct — ghidezi cu întrebări simple
+- Folosești exemple din viața de zi cu zi
+- Ești vesel și încurajator
+- La final întrebi dacă a înțeles`;
+    }
 
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -11,18 +38,7 @@ export async function POST(request) {
       body: JSON.stringify({
         model: "z-ai/glm-4.5-air:free",
         messages: [
-          {
-            role: "system",
-            content: `Ești Andi, un tutore AI prietenos pentru copii din România. 
-Ajuți elevii de clasa I până la clasa a VIII-a să înțeleagă materia școlară.
-Regulile tale:
-- Vorbești DOAR în română
-- Nu dai niciodată răspunsul direct — ghidezi copilul cu întrebări
-- Explici simplu, cu exemple din viața de zi cu zi
-- Ești răbdător, încurajator și vesel
-- Folosești programa școlară din România
-- La final de explicație întrebi dacă a înțeles`,
-          },
+          { role: "system", content: systemPrompt },
           ...messages,
         ],
       }),
@@ -32,14 +48,22 @@ Regulile tale:
     if (!data.choices || !data.choices[0]) {
       return Response.json({ message: "Eroare API: " + JSON.stringify(data) });
     }
-    return Response.json({
-      message: data.choices[0].message.content,
-    });
+
+    const content = data.choices[0].message.content;
+
+    if (generateQuiz) {
+      try {
+        const clean = content.replace(/```json|```/g, "").trim();
+        const quiz = JSON.parse(clean);
+        return Response.json({ quiz });
+      } catch {
+        return Response.json({ message: content });
+      }
+    }
+
+    return Response.json({ message: content });
   } catch (error) {
     console.error(error);
-    return Response.json(
-      { message: "Eroare: " + error.message },
-      { status: 500 }
-    );
+    return Response.json({ message: "Eroare: " + error.message }, { status: 500 });
   }
 }
