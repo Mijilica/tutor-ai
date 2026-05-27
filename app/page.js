@@ -1,21 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 
 const CLASE = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII"];
 const MATERII = ["Matematică", "Română", "Istorie", "Geografie", "Științe", "Fizică", "Chimie", "Biologie", "Engleză"];
 
 const MATERIE_CONFIG = {
-  "Matematică": { icon: "🔢", bg: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1920&q=80" },
-  "Română": { icon: "📖", bg: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1920&q=80" },
-  "Istorie": { icon: "⚔️", bg: "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1920&q=80" },
-  "Geografie": { icon: "🌍", bg: "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1920&q=80" },
-  "Științe": { icon: "🔬", bg: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1920&q=80" },
-  "Fizică": { icon: "⚡", bg: "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=1920&q=80" },
-  "Chimie": { icon: "🧪", bg: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1920&q=80" },
-  "Biologie": { icon: "🌿", bg: "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80" },
-  "Engleză": { icon: "🇬🇧", bg: "https://images.unsplash.com/photo-1526129318478-62ed807ebdf9?w=1920&q=80" },
+  "Matematică": { icon: "🔢" },
+  "Română": { icon: "📖" },
+  "Istorie": { icon: "⚔️" },
+  "Geografie": { icon: "🌍" },
+  "Științe": { icon: "🔬" },
+  "Fizică": { icon: "⚡" },
+  "Chimie": { icon: "🧪" },
+  "Biologie": { icon: "🌿" },
+  "Engleză": { icon: "🇬🇧" },
 };
+
 const BADGES = [
   { id: "first", icon: "🌟", name: "Prima întrebare!", points: 0 },
   { id: "10points", icon: "🥉", name: "10 puncte!", points: 10 },
@@ -23,12 +24,25 @@ const BADGES = [
   { id: "50points", icon: "🥇", name: "50 puncte!", points: 50 },
   { id: "100points", icon: "🏆", name: "100 puncte!", points: 100 },
 ];
+
+const BG_IMAGES = {
+  "Matematică": "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=1920&q=80",
+  "Română": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=1920&q=80",
+  "Istorie": "https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=1920&q=80",
+  "Geografie": "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1920&q=80",
+  "Științe": "https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=1920&q=80",
+  "Fizică": "https://images.unsplash.com/photo-1636466497217-26a8cbeaf0aa?w=1920&q=80",
+  "Chimie": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=1920&q=80",
+  "Biologie": "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1920&q=80",
+  "Engleză": "https://images.unsplash.com/photo-1526129318478-62ed807ebdf9?w=1920&q=80",
+};
+
 function ChatBackground({ materie }) {
-  const config = MATERIE_CONFIG[materie];
-  if (!config?.bg) return null;
+  const img = BG_IMAGES[materie];
+  if (!img) return null;
   return (
     <div className="fixed inset-0 z-0">
-      <img src={config.bg} alt="" className="w-full h-full object-cover" />
+      <img src={img} alt="" className="w-full h-full object-cover" />
       <div className="absolute inset-0 bg-black/50" />
     </div>
   );
@@ -45,8 +59,31 @@ export default function Home() {
   const [quizLoading, setQuizLoading] = useState(false);
   const [answers, setAnswers] = useState({});
   const [points, setPoints] = useState(0);
+  const [earnedBadges, setEarnedBadges] = useState([]);
+  const [newBadge, setNewBadge] = useState(null);
 
   const config = MATERIE_CONFIG[materie] || { icon: "📚" };
+
+  useEffect(() => {
+    BADGES.forEach(badge => {
+      if (points >= badge.points && !earnedBadges.find(b => b.id === badge.id)) {
+        setEarnedBadges(prev => [...prev, badge]);
+        setNewBadge(badge);
+        setTimeout(() => setNewBadge(null), 3000);
+      }
+    });
+  }, [points]);
+
+  useEffect(() => {
+    if (messages.length === 1 && messages[0].role === "user") {
+      const firstBadge = BADGES[0];
+      if (!earnedBadges.find(b => b.id === firstBadge.id)) {
+        setEarnedBadges(prev => [...prev, firstBadge]);
+        setNewBadge(firstBadge);
+        setTimeout(() => setNewBadge(null), 3000);
+      }
+    }
+  }, [messages]);
 
   async function sendMessage() {
     if (!input.trim()) return;
@@ -134,9 +171,16 @@ export default function Home() {
   return (
     <div className="min-h-screen flex flex-col items-center p-4 relative">
       <ChatBackground materie={materie} />
+
+      {newBadge && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-50 bg-yellow-500 text-black px-6 py-3 rounded-2xl font-bold text-lg shadow-xl animate-bounce">
+          {newBadge.icon} Insignă nouă: {newBadge.name}
+        </div>
+      )}
+
       <div className="flex items-center justify-between w-full max-w-2xl my-4 z-10 bg-black/40 backdrop-blur rounded-2xl px-4 py-2">
         <div className="flex items-center gap-3">
-          <button onClick={() => { setStarted(false); setMessages([]); setQuiz(null); setAnswers({}); }}
+          <button onClick={() => { setStarted(false); setMessages([]); setQuiz(null); setAnswers({}); setPoints(0); setEarnedBadges([]); }}
             className="text-blue-400 hover:text-white transition-all mr-2">
             ← Înapoi
           </button>
@@ -146,8 +190,15 @@ export default function Home() {
             <p className="text-blue-300 text-sm">Clasa {clasa} · {materie}</p>
           </div>
         </div>
-        <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-xl px-4 py-2">
-          <p className="text-yellow-400 font-bold">⭐ {points} puncte</p>
+        <div className="flex items-center gap-2">
+          <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-xl px-3 py-1">
+            <p className="text-yellow-400 font-bold">⭐ {points} puncte</p>
+          </div>
+          <div className="flex gap-1">
+            {earnedBadges.map(b => (
+              <span key={b.id} title={b.name} className="text-xl">{b.icon}</span>
+            ))}
+          </div>
         </div>
       </div>
 
